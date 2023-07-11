@@ -1,43 +1,76 @@
 import { Button, Form } from "react-bootstrap";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import ListaTareas from "./ListaTareas";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { consultaAgregarTarea, consultaListaTareas } from "./helpers/queris";
+import { useForm } from "react-hook-form";
+import Swal from "sweetalert2";
 
 const FormularioTarea = () => {
-  const [tarea, setTarea] = useState("");
-  const [tareas, setTareas] = useState([]);
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+        reset,
+    } = useForm();
+    const [tareaNueva, setTareaNueva] = useState("");
+    const [tareas, setTareas] = useState([]);
 
-  const handleSubmit = (e)=>{
-    e.preventDefault();
-   setTareas([...tareas,tarea]);
-   setTarea('');
-  }
+    useEffect(() => {
+        consultaListaTareas().then((respuesta) => {
+            setTareas(respuesta);
+        });
+    }, []);
+    const onSubmit = (tareaNueva) => {
+        consultaAgregarTarea(tareaNueva).then((respuestaCreated) => {
+            if (respuestaCreated && respuestaCreated.status === 201) {
+                Swal.fire(
+                    "Tarea creada",
+                    `La tarea ${tareaNueva.nombreTarea} fue creada correctamente`,
+                    "success"
+                );
+                reset();
+                consultaListaTareas().then((respuesta) => {
+                    setTareas(respuesta);
+                });
+            } else {
+                Swal.fire(
+                    "Ocurrio un error",
+                    `La tarea ${tareaNueva.nombreProducto} no fue creada, intentelo mas tarde`,
+                    "error"
+                );
+            }
+        });
+    };
 
-  const borrarTarea = (nombreTarea)=>{
-    let copiaTareas = tareas.filter((itemTarea)=> itemTarea !== nombreTarea );
-    setTareas(copiaTareas);
-  }
+    return (
+        <section>
+            <Form onSubmit={handleSubmit(onSubmit)}>
+                <Form.Group className="mb-3" controlId="tarea">
+                    <div className="d-flex">
+                        <Form.Control
+                            type="text"
+                            placeholder="Ingrese una tarea"
+                            maxLength={100}
+                            {...register("nombreTarea", {
+                                required: "Debe ingresar una tarea",
+                                maxLength: {
+                                    value: 100,
+                                    message: "La cantidad máxima de caracteres es de 100 digitos",
+                                },
+                            })}
+                        />
+                        <Button variant="primary" type="submit">
+                            <i className="bi bi-plus-circle fs-5"></i>
+                        </Button>
+                    </div>
 
-  return (
-    <section>
-      <Form onSubmit={handleSubmit}>
-        <Form.Group className="mb-3 d-flex" controlId="tarea">
-          <Form.Control
-            type="text"
-            placeholder="Ingrese una tarea"
-            onChange={(e) => setTarea(e.target.value)}
-            value={tarea}
-            required
-            maxLength={75}
-          />
-          <Button variant="primary" type="submit">
-          <i className="bi bi-plus-circle fs-5"></i>
-          </Button>
-        </Form.Group>
-      </Form>
-      <ListaTareas tareas={tareas} borrarTarea={borrarTarea}></ListaTareas>
-    </section>
-  );
+                    <Form.Text className="text-danger">{errors.nombreTarea?.message}</Form.Text>
+                </Form.Group>
+            </Form>
+            <ListaTareas tareas={tareas} setTareas={setTareas}></ListaTareas>
+        </section>
+    );
 };
 
 export default FormularioTarea;
