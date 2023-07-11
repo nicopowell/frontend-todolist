@@ -1,11 +1,18 @@
 import { Button, Form } from "react-bootstrap";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import ListaTareas from "./ListaTareas";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { consultaListaTareas } from "./helpers/queris";
 
 const FormularioTarea = () => {
   const [tarea, setTarea] = useState("");
   const [tareas, setTareas] = useState([]);
+
+  useEffect(() => {
+    consultaListaTareas().then((respuesta) => {
+      setTareas(respuesta);
+    });
+  }, []);
 
   const handleSubmit = (e)=>{
     e.preventDefault();
