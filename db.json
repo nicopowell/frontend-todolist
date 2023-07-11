@@ -1,4 +1,24 @@
 {
-    "tareas": ["estudiar","trabajar","entrenar"
-    ]
-  }
+  "tareas": [
+    {
+      "nombreTarea": "Estudiar",
+      "id": 1
+    },
+    {
+      "nombreTarea": "Trabajar",
+      "id": 2
+    },
+    {
+      "nombreTarea": "Cocinar",
+      "id": 3
+    },
+    {
+      "nombreTarea": "Practicar",
+      "id": 4
+    },
+    {
+      "nombreTarea": "Entrenar",
+      "id": 5
+    }
+  ]
+}
