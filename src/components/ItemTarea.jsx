@@ -17,7 +17,7 @@ const ItemTarea = ({ tarea, setTareas }) => {
             cancelButtonText: "Cancelar",
         }).then((result) => {
             if (result.isConfirmed) {
-                consultaBorrarTarea(tarea.id).then((respuesta) => {
+                consultaBorrarTarea(tarea._id).then((respuesta) => {
                     if (respuesta.status === 200) {
                         Swal.fire(
                             "Tarea eliminada",
@@ -38,9 +38,11 @@ const ItemTarea = ({ tarea, setTareas }) => {
         });
     };
     const editarTarea = (id) => {
+      console.log(id)
         Swal.fire({
             title: "Editar tarea",
             input: "text",
+            inputValue: tarea.nombreTarea,
             showCancelButton: true,
             confirmButtonText: "Editar",
             showLoaderOnConfirm: true,
@@ -63,7 +65,7 @@ const ItemTarea = ({ tarea, setTareas }) => {
             <ListGroup.Item className="d-flex justify-content-between align-items-center">
                 <span className="ajustarTexto me-2">{tarea.nombreTarea}</span>
                 <div>
-                    <Button variant="outline-primary me-2" onClick={() => editarTarea(tarea.id)}>
+                    <Button variant="outline-primary me-2" onClick={() => editarTarea(tarea._id)}>
                         <i className="bi bi-pencil-square fs-5"></i>
                     </Button>
                     <Button variant="outline-danger" onClick={borrarTarea}>
